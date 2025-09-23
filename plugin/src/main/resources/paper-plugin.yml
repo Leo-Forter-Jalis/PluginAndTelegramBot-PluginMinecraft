@@ -1,0 +1,12 @@
+name: PluginAndTelegramBot
+version: '1.2'
+author: Leo_Forter_Jalis
+main: com.lfj.plugin.patb.Main
+api-version: '1.21'
+bootstrapper: com.lfj.plugin.patb.BootstrapClass
+dependencies:
+  server:
+    DataProvider:
+      load: BEFORE
+      required: true
+      join-classpath: true
