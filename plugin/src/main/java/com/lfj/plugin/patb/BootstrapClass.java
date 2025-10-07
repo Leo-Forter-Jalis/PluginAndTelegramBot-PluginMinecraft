@@ -9,7 +9,7 @@ public class BootstrapClass implements PluginBootstrap {
 
     @Override
     public void bootstrap(BootstrapContext bootstrapContext) {
-
+        bootstrapContext.getLogger().info("bootstrap stadia!");
     }
 
     @Override

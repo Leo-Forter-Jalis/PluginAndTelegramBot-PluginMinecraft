@@ -42,6 +42,7 @@ public class TelegramBot {
         application = new TelegramBotsLongPollingApplication();
         service.submit(() -> {
             try{
+                this.plugin.getLogger().info("Task started...");
                 Bot.init(token, this.plugin);
                 application.registerBot(token, Bot.getInstance());
                 this.plugin.getLogger().info("Telegram bot is started!");

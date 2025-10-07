@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.entity.Player;
 
+import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
+
 import com.lfj.datacontroller.DataController;
 import com.lfj.datacontroller.PlayerData;
 
@@ -27,7 +29,11 @@ public class JoinEvent implements Listener {
         PlayerData data = this.plugin.getServer().getServicesManager().load(DataController.class).get(player.getName());
         if(data == null) return;
         data.setUuid(player.getUniqueId());
-        player.displayName(Component.empty().append(Component.text(data.getDisplayName())).color(TextColor.fromHexString(data.getHexCode())));
+        if(data.getHexCode() != null)
+            player.displayName(Component.empty().append(Component.text(data.getDisplayName())).color(TextColor.fromHexString(data.getHexCode())));
+        else{
+            player.displayName(Component.empty().append(Component.text(data.getDisplayName())));
+        }
     }
 
 }

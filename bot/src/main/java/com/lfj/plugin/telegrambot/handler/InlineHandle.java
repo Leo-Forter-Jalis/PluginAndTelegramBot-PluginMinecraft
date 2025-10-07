@@ -25,7 +25,7 @@ public class InlineHandle {
 
         InputTextMessageContent content = InputTextMessageContent
                 .builder()
-                .messageText("Доброго дня, " + user.getFirstName() + ".\nВы можете получить инструкции как подключиться на сервер, написав <a href=\"https://t.me/TESTABRACADABRABOT\">мне в лс </a>/start. \n\nДАННАЯ ФУНКЦИЯ В БЕТЕ!")
+                .messageText("Доброго дня, " + user.getFirstName() + ".\nВы можете получить инструкции как подключиться на сервер, написав <a href=\"https://t.me/ahfahfkahalkwndlkand_bot\">мне в лс </a>/start. \n\nДАННАЯ ФУНКЦИЯ В БЕТЕ!")
                 .parseMode("HTML")
                 .build();
 

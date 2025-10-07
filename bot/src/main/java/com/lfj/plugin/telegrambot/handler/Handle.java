@@ -67,9 +67,35 @@ public class Handle {
     public static void handleStartOrHelp(TelegramClient client, Update update, JavaPlugin plugin){
         String text = update.getMessage().getText();
         if(text.equals("/start"))
-            sendMessageToUser(client, update.getMessage().getFrom(), "Доброго времени суток!\nДанный бот предназначен для добавления участников в белый список сервера.\n\nЧтобы добавтить себя на сервер, вам нужно написать команду > /add_me [NickName] (hex=#color_code)\nПример №1 > /add_me Player\nПример №2 > /add_me Player hex=#FFFFFF\n\nГде взять color_code?\nМожно воспользоваться сайтом https://csscolor.ru/ , вам лишь выбрать цвет и скопировать строку под названием 'HEX'(Вставить надо с #-символом).", plugin);
+            sendMessageToUser(client, update.getMessage().getFrom(), "Доброго времени суток!\n" +
+                    "Данный бот добавит вас в список сервера и вы сможете зайти, но чтобы это сделать, нужно добавить себя в список. Как? Все очень просто:\n\n" +
+                    "/add_me [NickName] (dDisplayName) (true/false) (#hexcode)" +
+                    "Что значат все эти аргументы?\n" +
+                    "[NickName] - Ваш ник, под которым вы зайдете на сервер, он всегда идет первым после команды.\n" +
+                    "(dDisplayName) - Ваше отображаемое имя. Можно ввести любое имя, но для его добавления нужно добавить перед вашим именем d. Если вы не укажите параметр, то будет взято имя из вашего аккаунта.\n" +
+                    "(true/false) - Параметр нужен для того, чтобы в будущем разработчик сервера мог вам отправлять код подтверждения. Сейчас это просто балванка.\n" +
+                    "(#hexcode) - Цвет вашего отображаемого имени. Формат HEX.\n\n" +
+                    "[] - обязательный параметр.\n" +
+                    "() - не обязательный параметр\n\n" +
+                    "Пример:\n" +
+                    "№1 /add_me Example dExample true #FFFFFF\n" +
+                    "№2 /add_me Example true #f5b618\n" +
+                    "№3 /add_me Example", plugin);
         else if(text.equals("/help"))
-            sendMessageToUser(client, update.getMessage().getFrom(), "Доброго времени суток!\nДанный бот предназначен для добавления участников в белый список сервера.\n\nЧтобы добавтить себя на сервер, вам нужно написать команду > /add_me [NickName] (hex=#color_code)\nПример №1 > /add_me Player\nПример №2 > /add_me Player hex=#FFFFFF\n\nГде взять color_code?\nМожно воспользоваться сайтом https://csscolor.ru/ , вам лишь выбрать цвет и скопировать строку под названием 'HEX'(Вставить надо с #-символом).", plugin);
+            sendMessageToUser(client, update.getMessage().getFrom(), "Доброго времени суток!\n" +
+                    "Данный бот добавит вас в список сервера и вы сможете зайти, но чтобы это сделать, нужно добавить себя в список. Как? Все очень просто:\n\n" +
+                    "/add_me [NickName] (dDisplayName) (true/false) (#hexcode)" +
+                    "Что значат все эти аргументы?\n" +
+                    "[NickName] - Ваш ник, под которым вы зайдете на сервер, он всегда идет первым после команды.\n" +
+                    "(dDisplayName) - Ваше отображаемое имя. Можно ввести любое имя, но для его добавления нужно добавить перед вашим именем d. Если вы не укажите параметр, то будет взято имя из вашего аккаунта.\n" +
+                    "(true/false) - Параметр нужен для того, чтобы в будущем разработчик сервера мог вам отправлять код подтверждения. Сейчас это просто балванка.\n" +
+                    "(#hexcode) - Цвет вашего отображаемого имени. Формат HEX.\n\n" +
+                    "[] - обязательный параметр.\n" +
+                    "() - не обязательный параметр\n\n" +
+                    "Пример:\n" +
+                    "№1 /add_me Example dExample true #FFFFFF\n" +
+                    "№2 /add_me Example true #f5b618\n" +
+                    "№3 /add_me Example", plugin);
         else{
             sendMessageToUser(client, update.getMessage().getFrom(), "Введите команду /start или /help для подробностей.", plugin);
         }
