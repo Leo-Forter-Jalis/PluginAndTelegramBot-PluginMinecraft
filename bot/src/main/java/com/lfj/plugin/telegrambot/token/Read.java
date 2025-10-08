@@ -20,7 +20,7 @@ public class Read {
         try {
             token = yaml.readValue(file, TokenClass.class);
         }catch (IOException e) { e.printStackTrace(); }
-        if(token == null) return  "TOKEN";
+        if(token == null) return "TOKEN";
         return token.getToken();
     }
 }

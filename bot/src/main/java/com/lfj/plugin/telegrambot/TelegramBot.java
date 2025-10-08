@@ -1,84 +1,87 @@
 package com.lfj.plugin.telegrambot;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.bukkit.plugin.java.JavaPlugin;
+import com.lfj.plugin.api.BotPlugin;
 
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
+import org.telegram.telegrambots.longpolling.BotSession;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static com.lfj.plugin.telegrambot.token.Read.readToken;
 
-public class TelegramBot {
-    private static TelegramBot instance;
-    private JavaPlugin plugin;
-    private ExecutorService service;
+import static com.lfj.plugin.telegrambot.handler.Handle.handle;
+import static com.lfj.plugin.telegrambot.handler.Handle.handleStartOrHelp;
+import static com.lfj.plugin.telegrambot.handler.InlineHandle.inlineHandle;
 
-    public synchronized static void init(JavaPlugin plugin){
-        if(instance != null) throw new IllegalStateException("Telegram bot already initialized. Call close() first if you want to reinitialize.");
-        if(plugin == null) throw new IllegalArgumentException("Argument plugin cannot be null.");
-        instance = new TelegramBot(plugin);
-    }
-
-    public static TelegramBot getInstance(){
-        if(instance == null) throw new IllegalStateException("Telegram not initialized. Call init() first.");
-        return instance;
-    }
-
+public class TelegramBot extends BotPlugin {
     private TelegramBotsLongPollingApplication application;
-    private final String token;
-
-    private TelegramBot(JavaPlugin plugin){
-        this.plugin = plugin;
-        this.token = readToken(this.plugin.getDataFolder());
-        this.service = Executors.newSingleThreadExecutor();
+    private BotSession session;
+    private TelegramClient client;
+    private String token;
+    @Override
+    public void onEnabled(){
+        getPlugin().getLogger().info("Starting bots...");
+        this.application = new TelegramBotsLongPollingApplication();
+        this.token = readToken(getPlugin().getDataFolder());
+        this.client = new OkHttpTelegramClient(token);
+        startBot();
     }
-    private void start(){
-        if(this.token.equals("TOKEN")){
-            this.plugin.getLogger().warning("Token is not worked.");
-            return;
+
+    private void startBot(){
+        if(token == null || token.equals("TOKEN")){
+            getPlugin().getLogger().info("Token is null");
+            onDisabled();
         }
-        application = new TelegramBotsLongPollingApplication();
-        service.submit(() -> {
-            try{
-                this.plugin.getLogger().info("Task started...");
-                Bot.init(token, this.plugin);
-                application.registerBot(token, Bot.getInstance());
-                this.plugin.getLogger().info("Telegram bot is started!");
-            }catch (TelegramApiException e){
-                this.plugin.getLogger().severe("Telegram bot stoping >> " + e.getMessage());
-                e.printStackTrace();
+        try{
+            this.session = this.application.registerBot(token, this);
+            getPlugin().getLogger().info("Bot Started!");
+        }catch (TelegramApiException e){ e.printStackTrace(); }
+    }
+
+    @Override
+    public void onDisabled(){
+        getPlugin().getLogger().info("Stoping bot...");
+        try{
+            if(this.session != null || this.session.isRunning()){
+                getPlugin().getLogger().info("Stoping Telegram session...");
+                session.stop();
+                session.close();
+                session = null;
             }
-        });
+            getPlugin().getLogger().info("Stopping Telegram Bot application...");
+            application.unregisterBot(token);
+            application.stop();
+            application.close();
+            client = null;
+            token = null;
+            getPlugin().getLogger().info("Bot stopped!");
+        }catch (TelegramApiException e){
+            getPlugin().getLogger().severe(e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            getPlugin().getLogger().severe(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    public void run(){
-        this.plugin.getServer().getLogger().info("Starting Telegram bot...");
-        start();
-    }
-
-    public synchronized void close(){
-        this.plugin.getLogger().info("Stoping Telegram bot...");
-        if(application != null) {
-            try {
-                application.unregisterBot(token);
-                application.stop();
-                application.close();
-                application = null;
-                this.plugin.getLogger().info("Telegram bot stop.");
-            } catch (Exception e) {
-                this.plugin.getLogger().severe("Error stoping Telegram bot > " + e.getMessage());
-                e.printStackTrace();
+    @Override
+    public void consume(Update update) {
+        if(update.hasMessage()){
+            if(update.getMessage().hasText()){
+                String text = update.getMessage().getText();
+                if(text.startsWith("/start") || text.startsWith("/help")){
+                    handleStartOrHelp(client, update, plugin);
+                } else if (text.startsWith("/add_me")) {
+                    String command = text.substring(0, text.indexOf(' '));
+                    String a = text.substring(command.length()+1);
+                    String[] args = a.split(" ");
+                    handle(command, args, client, update, getPlugin());
+                }
             }
+        } else if (update.hasInlineQuery()) {
+            inlineHandle(update, client, getPlugin());
         }
-        if(service != null){
-            service.shutdown();
-            service = null;
-            this.plugin.getLogger().info("Thread closed.");
-        }
-        instance = null;
-        this.plugin = null;
     }
-
 }

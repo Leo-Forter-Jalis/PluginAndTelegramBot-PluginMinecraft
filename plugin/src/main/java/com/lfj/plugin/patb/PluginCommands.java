@@ -7,7 +7,6 @@ import com.mojang.brigadier.Command;
 
 import org.bukkit.command.ConsoleCommandSender;
 
-import com.lfj.plugin.telegrambot.TelegramBot;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,9 +22,6 @@ public class PluginCommands {
                     return false;
                 })
                 .then(Commands.literal("reload").executes(ctx ->{
-                       TelegramBot.getInstance().close();
-                       TelegramBot.init(plugin);
-                       TelegramBot.getInstance().run();
                        return Command.SINGLE_SUCCESS;
                 })).build();
     }

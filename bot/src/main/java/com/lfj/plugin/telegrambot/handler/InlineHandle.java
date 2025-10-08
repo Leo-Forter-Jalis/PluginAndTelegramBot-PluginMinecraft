@@ -45,7 +45,7 @@ public class InlineHandle {
                 .build();
         try {
             client.execute(answer);
-            plugin.getLogger().info("Пользователь >> " + user.getFirstName() + ", userID >> " + user.getId());
+            plugin.getLogger().info("userID >> " + user.getId());
         } catch (TelegramApiException e){ e.printStackTrace(); }
 
     }

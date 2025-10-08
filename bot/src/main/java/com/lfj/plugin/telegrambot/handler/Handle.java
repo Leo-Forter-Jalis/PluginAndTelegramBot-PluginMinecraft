@@ -108,9 +108,8 @@ public class Handle {
                 .build();
         try{client.execute(message);}catch (TelegramApiException e){e.printStackTrace();}
         StringBuilder sb = new StringBuilder();
-        sb.append("[User >> " + user.getFirstName() + "]")
-                        .append("[UserID >> " + user.getId() + "]")
-                                .append("[Answer >> " + text + "]");
+        sb.append("[UserID >> " + user.getId() + "], ")
+                .append("[Answer >> " + text + "]");
         plugin.getLogger().info(sb.toString());
     }
 }

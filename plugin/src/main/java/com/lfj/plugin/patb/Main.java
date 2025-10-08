@@ -7,27 +7,35 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import static com.lfj.plugin.patb.CommandExample.register;
 import static com.lfj.plugin.patb.PluginCommands.reloadCommand;
 
-import com.lfj.plugin.telegrambot.TelegramBot;
+import com.lfj.plugin.patb.botmanager.BotLoadAndUnload;
+
+import java.io.File;
+import java.io.IOException;
 
 public final class Main extends JavaPlugin {
-
+    private BotLoadAndUnload loadAndUnload;
     @Override
     public void onEnable() {
         if(!getDataFolder().exists())
             getDataFolder().mkdirs();
-        TelegramBot.init(this);
-        TelegramBot.getInstance().run();
-        getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
-        getServer().getPluginManager().registerEvents(new ConnectionsPlayers(), this);
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, command -> {
-            command.registrar().register(reloadCommand("tgbotyai", this));
-            //command.registrar().register(register(), " ");
-        });
-        this.reloadConfig();
+        File directory = new File(getDataFolder(), "bots");
+        if(!directory.exists())
+            directory.mkdirs();
+        loadAndUnload = new BotLoadAndUnload(this);
+        try {
+            loadAndUnload.load(directory);
+        } catch (Exception e) {
+            getServer().getLogger().severe("[TelegramBot-PL-YAI]" + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDisable() {
-        TelegramBot.getInstance().close();
+        try {
+            loadAndUnload.unload();
+        } catch (IOException e) {
+            getServer().getLogger().severe(e.getMessage());
+        }
     }
 }
