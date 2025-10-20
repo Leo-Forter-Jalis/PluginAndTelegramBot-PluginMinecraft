@@ -1,6 +1,6 @@
 package com.lfj.plugin.telegrambot;
 
-import com.lfj.plugin.api.BotPlugin;
+import com.lfj.plugin.api.telegram.TelegramBotPlugin;
 
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -15,7 +15,7 @@ import static com.lfj.plugin.telegrambot.handler.Handle.handle;
 import static com.lfj.plugin.telegrambot.handler.Handle.handleStartOrHelp;
 import static com.lfj.plugin.telegrambot.handler.InlineHandle.inlineHandle;
 
-public class TelegramBot extends BotPlugin {
+public class TelegramBot extends TelegramBotPlugin {
     private TelegramBotsLongPollingApplication application;
     private BotSession session;
     private TelegramClient client;
@@ -72,7 +72,7 @@ public class TelegramBot extends BotPlugin {
             if(update.getMessage().hasText()){
                 String text = update.getMessage().getText();
                 if(text.startsWith("/start") || text.startsWith("/help")){
-                    handleStartOrHelp(client, update, plugin);
+                    handleStartOrHelp(client, update, getPlugin());
                 } else if (text.startsWith("/add_me")) {
                     String command = text.substring(0, text.indexOf(' '));
                     String a = text.substring(command.length()+1);

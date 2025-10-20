@@ -9,8 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.entity.Player;
 
-import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
-
 import com.lfj.datacontroller.DataController;
 import com.lfj.datacontroller.PlayerData;
 

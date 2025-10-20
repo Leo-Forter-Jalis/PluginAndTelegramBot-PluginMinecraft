@@ -1,41 +1,30 @@
 package com.lfj.plugin.patb;
 
+import com.lfj.plugin.patb.botmanager.BotBootManager;
 import com.lfj.plugin.patb.listener.JoinEvent;
 import com.lfj.plugin.patb.listener.ConnectionsPlayers;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.plugin.java.JavaPlugin;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import static com.lfj.plugin.patb.CommandExample.register;
-import static com.lfj.plugin.patb.PluginCommands.reloadCommand;
-
-import com.lfj.plugin.patb.botmanager.BotLoadAndUnload;
-
-import java.io.File;
-import java.io.IOException;
 
 public final class Main extends JavaPlugin {
-    private BotLoadAndUnload loadAndUnload;
+    private BotBootManager botBootManager;
     @Override
     public void onEnable() {
         if(!getDataFolder().exists())
             getDataFolder().mkdirs();
-        File directory = new File(getDataFolder(), "bots");
-        if(!directory.exists())
-            directory.mkdirs();
-        loadAndUnload = new BotLoadAndUnload(this);
-        try {
-            loadAndUnload.load(directory);
-        } catch (Exception e) {
-            getServer().getLogger().severe("[TelegramBot-PL-YAI]" + e.getMessage());
-            e.printStackTrace();
-        }
+        botBootManager = new BotBootManager(getDataFolder(), this);
+        botBootManager.load();
+        LiteralArgumentBuilder argument = Commands.literal("tgplyai");
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, command ->{
+            command.registrar().register(LoadCommand.loadCommand(botBootManager));
+            command.registrar().register(UnloadCommand.unloadCommand(botBootManager));
+        });
     }
 
     @Override
     public void onDisable() {
-        try {
-            loadAndUnload.unload();
-        } catch (IOException e) {
-            getServer().getLogger().severe(e.getMessage());
-        }
+        botBootManager.unload();
     }
 }
